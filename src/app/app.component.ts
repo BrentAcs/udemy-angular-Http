@@ -1,13 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  selector: "app-root",
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.css"],
 })
 export class AppComponent implements OnInit {
   loadedPosts = [];
+
+  // Firebase:  https://ng-complete-guide-4e0a0-default-rtdb.firebaseio.com/
 
   constructor(private http: HttpClient) {}
 
@@ -15,7 +17,12 @@ export class AppComponent implements OnInit {
 
   onCreatePost(postData: { title: string; content: string }) {
     // Send Http request
-    console.log(postData);
+    this.http.post(
+      "https://ng-complete-guide-4e0a0-default-rtdb.firebaseio.com/posts.json",
+      postData
+    ).subscribe(responseData => {
+      console.log(responseData);
+    });
   }
 
   onFetchPosts() {
