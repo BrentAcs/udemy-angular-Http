@@ -10,7 +10,7 @@ import { Post } from "./post.model";
   styleUrls: ["./app.component.css"],
 })
 export class AppComponent implements OnInit {
-  loadedPosts = [];
+  loadedPosts: Post[] = [];
 
   // Firebase:  https://ng-complete-guide-4e0a0-default-rtdb.firebaseio.com/
 
@@ -59,6 +59,7 @@ export class AppComponent implements OnInit {
       .subscribe((posts) => {
         console.log("fetchPosts: ");
         console.log(posts);
+        this.loadedPosts = posts;
       });
   }
 }
