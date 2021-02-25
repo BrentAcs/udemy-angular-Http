@@ -9,7 +9,7 @@ export class PostsService {
   constructor(private http: HttpClient) {}
 
   createAndStorePost(title: string, content: string) {
-    const postData: Post = {'title': title, 'content': content};
+    const postData: Post = { title: title, content: content };
     this.http
       .post<{ name: string }>(
         "https://ng-complete-guide-4e0a0-default-rtdb.firebaseio.com/posts.json",
@@ -21,7 +21,7 @@ export class PostsService {
   }
 
   fetchPosts() {
-    this.http
+    return this.http
       .get<{ [key: string]: Post }>(
         "https://ng-complete-guide-4e0a0-default-rtdb.firebaseio.com/posts.json"
       )
@@ -35,13 +35,6 @@ export class PostsService {
           }
           return postsArray;
         })
-      )
-      .subscribe((posts) => {
-        // this.isFetching = false;
-        // console.log("fetchPosts: ");
-        // console.log(posts);
-        // this.loadedPosts = posts;
-      });
-
+      );
   }
 }

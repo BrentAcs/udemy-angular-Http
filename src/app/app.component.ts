@@ -28,7 +28,14 @@ export class AppComponent implements OnInit {
   }
 
   onFetchPosts() {
-    this.postsService.fetchPosts();
+    this.isFetching = true;
+    this.postsService.fetchPosts()
+      .subscribe((posts) => {
+        this.isFetching = false;
+        console.log("fetchPosts: ");
+        console.log(posts);
+        this.loadedPosts = posts;
+      });
   }
 
   onClearPosts() {
