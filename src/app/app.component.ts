@@ -13,8 +13,16 @@ import { PostsService } from "./posts.service";
 export class AppComponent implements OnInit {
   loadedPosts: Post[] = [];
   isFetching = false;
+  error = null;
 
   // Firebase:  https://ng-complete-guide-4e0a0-default-rtdb.firebaseio.com/
+  // Original Firebase Rules:
+  //   {
+  //   "rules": {
+  //     ".read": "now < 1616472000000",  // 2021-3-23
+  //     ".write": "now < 1616472000000",  // 2021-3-23
+  //   }
+  // }
 
   constructor(private http: HttpClient, private postsService: PostsService) {}
 
@@ -35,12 +43,19 @@ export class AppComponent implements OnInit {
 
   onFetchPosts() {
     this.isFetching = true;
-    this.postsService.fetchPosts().subscribe((posts) => {
-      this.isFetching = false;
-      console.log("fetchPosts: ");
-      console.log(posts);
-      this.loadedPosts = posts;
-    });
+    this.postsService.fetchPosts().subscribe(
+      (posts) => {
+        this.isFetching = false;
+        console.log("fetchPosts: ");
+        console.log(posts);
+        this.loadedPosts = posts;
+      },
+      (error) => {
+        this.error = error.error.error;
+        ;
+        console.log(error);
+      }
+    );
   }
 
   onClearPosts() {
