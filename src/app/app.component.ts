@@ -1,6 +1,6 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { map } from "rxjs/operators";
+import { Subscription } from "rxjs";
 
 import { Post } from "./post.model";
 import { PostsService } from "./posts.service";
@@ -10,10 +10,11 @@ import { PostsService } from "./posts.service";
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.css"],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   loadedPosts: Post[] = [];
   isFetching = false;
   error = null;
+  private errorSub: Subscription;
 
   // Firebase:  https://ng-complete-guide-4e0a0-default-rtdb.firebaseio.com/
   // Original Firebase Rules:
@@ -27,18 +28,20 @@ export class AppComponent implements OnInit {
   constructor(private http: HttpClient, private postsService: PostsService) {}
 
   ngOnInit() {
+    this.errorSub = this.postsService.error.subscribe((errorMessage) => {
+      this.error = errorMessage;
+    });
+
     this.onFetchPosts();
+  }
+
+  ngOnDestroy(): void {
+    this.errorSub.unsubscribe();
   }
 
   onCreatePost(postData: Post) {
     // Send Http request
-    this.postsService
-      .createAndStorePost(postData.title, postData.content)
-      .subscribe((responseData) => {
-        console.log("onCreatePost: ");
-        console.log(responseData);
-        this.onFetchPosts();
-      });
+    this.postsService.createAndStorePost(postData.title, postData.content);
   }
 
   onFetchPosts() {
@@ -52,7 +55,6 @@ export class AppComponent implements OnInit {
       },
       (error) => {
         this.error = error.error.error;
-        ;
         console.log(error);
       }
     );
