@@ -10,14 +10,11 @@ export class PostsService {
 
   createAndStorePost(title: string, content: string) {
     const postData: Post = { title: title, content: content };
-    this.http
+    return this.http
       .post<{ name: string }>(
         "https://ng-complete-guide-4e0a0-default-rtdb.firebaseio.com/posts.json",
         postData
-      )
-      .subscribe((responseData) => {
-        console.log("onCreatePost: " + responseData);
-      });
+      );
   }
 
   fetchPosts() {
@@ -36,5 +33,11 @@ export class PostsService {
           return postsArray;
         })
       );
+  }
+
+  deletePosts() {
+    return this.http.delete(
+      "https://ng-complete-guide-4e0a0-default-rtdb.firebaseio.com/posts.json/"
+    );
   }
 }
