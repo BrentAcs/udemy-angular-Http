@@ -1,7 +1,7 @@
-import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import { HttpClient, HttpEventType, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Subject, throwError } from "rxjs";
-import { map, catchError } from "rxjs/operators";
+import { map, catchError, tap } from "rxjs/operators";
 
 import { Post } from "./post.model";
 
@@ -16,11 +16,15 @@ export class PostsService {
     return this.http
       .post<{ name: string }>(
         "https://ng-complete-guide-4e0a0-default-rtdb.firebaseio.com/posts.json",
-        postData
+        postData,
+        {
+          // demonstrate how to use observe to get more than 'body' (which is default)
+          observe: 'response'
+        }
       )
       .subscribe(
         (responseData) => {
-          console.log(responseData);
+          console.log(responseData.body);
         },
         (error) => {
           this.error.next(error.message);
@@ -29,7 +33,7 @@ export class PostsService {
   }
 
   fetchPosts() {
-    // demo how to send multiple params 
+    // demo how to send multiple params
     let searchParams = new HttpParams();
     searchParams = searchParams.append("print", "pretty");
     searchParams = searchParams.append("custom", "key");
@@ -61,7 +65,15 @@ export class PostsService {
 
   deletePosts() {
     return this.http.delete(
-      "https://ng-complete-guide-4e0a0-default-rtdb.firebaseio.com/posts.json/"
-    );
+      "https://ng-complete-guide-4e0a0-default-rtdb.firebaseio.com/posts.json/",
+      {
+        observe: 'events'
+      }
+    ).pipe(tap((event) => {
+      console.log(event);
+      if( event.type === HttpEventType.Response){
+        console.log(event.body);
+      }
+    }));
   }
 }
