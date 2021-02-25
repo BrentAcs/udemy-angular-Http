@@ -1,4 +1,9 @@
-import { HttpClient, HttpEventType, HttpHeaders, HttpParams } from "@angular/common/http";
+import {
+  HttpClient,
+  HttpEventType,
+  HttpHeaders,
+  HttpParams,
+} from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Subject, throwError } from "rxjs";
 import { map, catchError, tap } from "rxjs/operators";
@@ -19,7 +24,7 @@ export class PostsService {
         postData,
         {
           // demonstrate how to use observe to get more than 'body' (which is default)
-          observe: 'response'
+          observe: "response",
         }
       )
       .subscribe(
@@ -64,16 +69,21 @@ export class PostsService {
   }
 
   deletePosts() {
-    return this.http.delete(
-      "https://ng-complete-guide-4e0a0-default-rtdb.firebaseio.com/posts.json/",
-      {
-        observe: 'events'
-      }
-    ).pipe(tap((event) => {
-      console.log(event);
-      if( event.type === HttpEventType.Response){
-        console.log(event.body);
-      }
-    }));
+    return this.http
+      .delete(
+        "https://ng-complete-guide-4e0a0-default-rtdb.firebaseio.com/posts.json/",
+        {
+          observe: "events",
+          responseType: "text",
+        }
+      )
+      .pipe(
+        tap((event) => {
+          console.log(event);
+          if (event.type === HttpEventType.Response) {
+            console.log(event.body);
+          }
+        })
+      );
   }
 }
